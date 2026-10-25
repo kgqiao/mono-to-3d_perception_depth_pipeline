@@ -1,0 +1,9 @@
+data/
+out/
+__pycache__/
+.pytest_cache/
+build/
+*.so
+*.pyd
+*.ply
+.venv/
