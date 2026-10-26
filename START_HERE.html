@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Start here</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<h1 id="start-here">Start here</h1>
+<p>Monocular visual odometry on KITTI, plus scale fixes from depth, the ground plane, LiDAR and an IMU.
+The lessons, tasks and checks for each step are in the Project lab, Perception tab (steps D1 to D12).</p>
+<h2 id="how-this-starter-works">How this starter works</h2>
+<ul>
+<li>Functions YOU own are stubbed: <code>raise NotImplementedError(&quot;You write this (D4): ...&quot;)</code>. The hint says which step.</li>
+<li><code>tests/</code> already knows the right answers on a synthetic driving world (<code>synth.py</code>). Implement, run the tests, repeat.</li>
+<li><code>solutions/</code> has reference versions. Peek only after you've tried, then compare line by line.</li>
+<li>Loading, matching, OpenCV solvers, plotting and bookkeeping are complete, so your time goes to the geometry.</li>
+<li>Every script has <code>--synthetic</code>, so you can run each step end to end before KITTI finishes downloading.</li>
+</ul>
+<h2 id="setup-windows-powershell-from-this-folder">Setup (Windows, PowerShell, from this folder)</h2>
+<pre><code>py -3.11 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m pytest -q          # at first: 19 fail, 6 pass, 1 skipped (the C++ test, until you build it). The failures are your to-do list.
+</code></pre>
+<h2 id="data-put-it-under-data">Data (put it under data/)</h2>
+<ul>
+<li>KITTI odometry: grayscale images (about 22 GB), calibration, ground-truth poses: <a href="https://www.cvlibs.net/datasets/kitti/eval_odometry.php">https://www.cvlibs.net/datasets/kitti/eval_odometry.php</a>
+Layout: data/kitti/sequences/00/image_0/*.png, data/kitti/sequences/00/calib.txt, data/kitti/poses/00.txt
+Tip: start with one short sequence (04 is about 270 frames, mostly straight; 07 has turns).</li>
+<li>D1-D3 depth evaluation uses KITTI depth (val_selection_cropped), the same data as the Wing depth-to-3D build.</li>
+<li>D10 Velodyne (very large) and D12 KITTI raw OXTS: only when you reach those optional steps.</li>
+</ul>
+<h2 id="order">Order</h2>
+<ol>
+<li>
+<p>D1-D3: <code>geom.py</code> (Same as Wing build)
+<code>python -m pytest -q tests/test_geom.py</code>
+then <code>python d1_cloud.py --synthetic</code>,
+<code>d2_height.py --synthetic</code>,
+<code>d3_eval.py --synthetic</code></p>
+</li>
+<li>
+<p>D4: <code>vo.py</code> owned functions
+-&gt; <code>python -m pytest -q tests/test_vo.py</code>
+-&gt; <code>python d4_two_view.py --synthetic</code></p>
+</li>
+<li>
+<p>D5: <code>traj.py</code>
+-&gt; <code>tests/test_traj.py</code>
+-&gt; <code>python d5_vo.py --synthetic</code>,
+then <code>--root data/kitti --seq 04</code></p>
+</li>
+<li>
+<p>D6: <code>scale.py</code>
+-&gt; <code>tests/test_scale.py</code>
+-&gt; <code>python d6_scale.py --synthetic</code>,
+then on 2 KITTI sequences</p>
+</li>
+<li>
+<p>D7: <code>failure.py</code>
+-&gt; <code>python d7_failure.py --frames out/d5_04_frames.csv</code>;
+<code>python corrupt.py ...</code>
+and re-run D5</p>
+</li>
+<li>
+<p>Optional: D8 <code>boxes.py</code>, D9 <code>sensors.py</code> loop checks (<code>d9_calibrate.py</code>, <code>d9_run.py</code>, <code>d9_loop.py</code>), D10 <code>project_velo</code>, D11 <code>cpp/fastmatch.cpp</code>, D12 IMU functions.</p>
+</li>
+</ol>
+<h2 id="c-step-d11">C++ step (D11)</h2>
+<pre><code># Windows: install Visual Studio Build Tools (&quot;Desktop development with C++&quot;) first
+python setup.py build_ext --inplace
+python -m pytest -q tests/test_cpp.py
+python bench_match.py
+</code></pre>
+<h1 id="project_3d_perception_pipeline">project_3d_perception_pipeline</h1>
+<p>Monocular to 3D Perception Pipeline</p>
+<h3 id="primary-reference-depth-anything-v2-codebase">Primary Reference: Depth Anything V2 Codebase</h3>
+<ul>
+<li><a href="https://depth-anything-v2.github.io/">https://depth-anything-v2.github.io/</a></li>
+<li>Depth Anything V2 Paper</li>
+<li><a href="https://github.com/DepthAnything/Depth-Anything-V2">https://github.com/DepthAnything/Depth-Anything-V2</a></li>
+<li>Live Simulation: <a href="https://huggingface.co/spaces/depth-anything/Depth-Anything-V2">https://huggingface.co/spaces/depth-anything/Depth-Anything-V2</a></li>
+</ul>
+<h3 id="references-for-tutorials">References for Tutorials:</h3>
+<ul>
+<li><a href="https://visionbrick.com/depth-anything-v2-generating-depth-maps-from-rgb-images/">https://visionbrick.com/depth-anything-v2-generating-depth-maps-from-rgb-images/</a></li>
+<li><a href="https://www.youtube.com/watch?v=1Lt4p-cf_6Y">https://www.youtube.com/watch?v=1Lt4p-cf_6Y</a></li>
+<li><a href="https://www.youtube.com/watch?v=BoibnBIw5DA">https://www.youtube.com/watch?v=BoibnBIw5DA</a></li>
+</ul>
+<h3 id="references-for-supplementary-libraries">References for Supplementary Libraries:</h3>
+<ul>
+<li>Color Maps for Matplotlib: <a href="https://matplotlib.org/stable/users/explain/colors/colormaps.html">https://matplotlib.org/stable/users/explain/colors/colormaps.html</a></li>
+</ul>
+<h3 id="about-concepts">ABOUT CONCEPTS:</h3>
+<p>Tutorial: <a href="https://www.youtube.com/watch?v=BoibnBIw5DA">https://www.youtube.com/watch?v=BoibnBIw5DA</a></p>
+<ul>
+<li>Monocular Depth Estimation = single camera, showing how far or close something is</li>
+<li>Training Method: Synthetic labeled dataset, pseudo label dataset</li>
+</ul>
+
+            
+            
+        </body>
+        </html>

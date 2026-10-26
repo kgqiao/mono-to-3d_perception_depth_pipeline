@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>4D Spatiotemporal Scene Graph Update &amp; Volumetric Change Engine</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <span id="markdown-mermaid" aria-hidden="true" data-config="{&quot;darkModeTheme&quot;:&quot;vscode&quot;,&quot;lightModeTheme&quot;:&quot;vscode&quot;,&quot;maxTextSize&quot;:50000,&quot;clickDrag&quot;:&quot;alt&quot;,&quot;showControls&quot;:&quot;onHoverOrFocus&quot;,&quot;resizable&quot;:true,&quot;maxHeight&quot;:&quot;&quot;}"></span>
+				<h1 id="4d-spatiotemporal-scene-graph-update--volumetric-change-engine">4D Spatiotemporal Scene Graph Update &amp; Volumetric Change Engine</h1>
+<p>An enterprise-grade, high-performance 3D perception and spatial-computing framework designed to automate <strong>High-Definition (HD) Vector Map maintenance</strong> from multi-temporal sensory streams. Moving entirely away from niche geospatial wrappers, this architecture processes a baseline image sequence (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">T_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) and an updated observation sequence (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">T_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) as raw multi-channel tensor structures. It leverages a <strong>pre-trained foundational vision backbone</strong> (such as ResNet or a Vision Transformer via <code>timm</code>) wrapped in a custom <strong>shared-weight Siamese architecture</strong> to isolate structural alterations. The system then regresses object height changes (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">\Delta H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span>) in metric units, projects flat pixels into dense <strong>3D Point Clouds</strong>, and serializes structural updates into an object-oriented 4D Scene Graph to prevent autonomy planning failures.</p>
+<p>[Image Stream T1 (NumPy/Tensor)] ──┐<br>
+├──&gt; [Shared Pre-trained Backbone] ──&gt; [Object Semantic Change Head]<br>
+[Image Stream T2 (NumPy/Tensor)] ──┘ │ (Gated Threshold Filter)<br>
+▼<br>
+[Camera Projection Matrices (Intrinsic)] ──&gt; [Linear Geometry Head] ──&gt; [Metric Height Head (nDSM)]<br>
+│<br>
+▼<br>
+[Open3D Bounding Volumes]<br>
+│<br>
+▼<br>
+[4D Scene Graph JSON/glTF]</p>
+<hr>
+<h2 id="-project-intent-vision-goal--users">🎯 Project Intent: Vision, Goal, &amp; Users</h2>
+<h3 id="the-use-case--real-world-application">The Use Case &amp; Real-World Application</h3>
+<p>Autonomous vehicles, delivery drones, and warehouse robotics depend heavily on geometric prior maps (HD Maps) to cross-reference real-time sensor observations. Physical environments change over time, rendering these maps inaccurate and introducing risk to localization and motion planning stacks.</p>
+<p>This system operates as an <strong>Autonomous Change and Obstruction Spotter</strong>. When a localized map tile receives a new aerial or camera sequence update, the pipeline extracts structural anomalies, computes their geometric 3D volume/height variations, and dynamically generates a <strong>4D Scene Graph Update patch</strong>. This allows autonomy stacks to update structural line-of-sight bounds and collision boxes without manual, fleet-wide remap drives.</p>
+<h3 id="the-targeted-users">The Targeted Users</h3>
+<ul>
+<li><strong>3D Perception &amp; AV Mapping Engineers (FAANG / Autonomous Driving Vehicles):</strong> To automate global base-map maintenance operations and target physical sensor collection fleets only to regions undergoing volumetric reconstruction.</li>
+<li><strong>Robotics Autonomy &amp; Planning Software Engineers:</strong> To dynamically monitor structural vertical profile shifts (cranes, new multi-story developments) along low-altitude delivery flight vectors or planetary navigation coordinates.</li>
+<li><strong>Spatial Computing &amp; Core CV Infrastructure Engineers:</strong> To parse raw pixel sequences into structured topological graphs, modeling physical landscapes as continuous data streams.</li>
+</ul>
+<hr>
+<h2 id="-the-core-innovation--gap-solved">💡 The Core Innovation &amp; Gap Solved</h2>
+<p>In simple terms, the gap this framework solves comes down to one core reality: <strong>Traditional maps are flat and blind, while modern autonomous systems need to see in 3D and understand structural relationships.</strong></p>
+<h3 id="1-the-gap-2d-pixels-vs-3d-physics">1. The Gap: 2D Pixels vs. 3D Physics</h3>
+<ul>
+<li><strong>Traditional Approach:</strong> Most open-source projects, tutorials, and standard software platforms look at two satellite images and perform <strong>2D Pixel Change Detection</strong> [1_16]. The output is just a flat, black-and-white mask that says, <em>&quot;Something changed right here.&quot;</em></li>
+<li><strong>Our Solution:</strong> This model doesn't just say <em>where</em> something changed; it calculates <strong>how much volume</strong> was added. It bridges the gap between 2D images and 3D space by calculating the exact vertical height change (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">\Delta H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span>) in meters and constructing a physical <strong>3D Point Cloud</strong> of the change.</li>
+</ul>
+<h3 id="2-the-bottleneck-dumb-pixels-vs-smart-objects-scene-graphs">2. The Bottleneck: &quot;Dumb&quot; Pixels vs. Smart Objects (Scene Graphs)</h3>
+<ul>
+<li><strong>Traditional Approach:</strong> Even when advanced systems detect a change, they treat it as an isolated cluster of pixels. They have no idea how that change affects the surrounding environment.</li>
+<li><strong>Our Solution:</strong> We convert those raw pixels into an object-oriented <strong>4D Scene Graph</strong>. The system programmatically groups the pixels into distinct, labeled entities (e.g., &quot;New Building Structure&quot;) and calculates its specific 3D coordinate bounding box and relationship to the scene.</li>
+</ul>
+<h3 id="3-the-deployment-gap-heavy-re-mapping-vs-targeted-updates">3. The Deployment Gap: Heavy Re-mapping vs. Targeted Updates</h3>
+<ul>
+<li><strong>Traditional Approach:</strong> Right now, when self-driving car or drone companies need to update their high-definition maps, they often have to send expensive sensor vehicles to re-drive entire cities, or they have to re-compute massive, multi-gigabyte map tiles from scratch.</li>
+<li><strong>Our Solution:</strong> This project acts as an automated <strong>Obstruction Spotter</strong>. Because it uses a smart &quot;gated&quot; architecture, it skips over 95% of the unchanging world (roads, trees, grass) and dynamically generates a lightweight <strong>&quot;map update patch&quot;</strong> (a JSON Scene Graph). This tells the self-driving car's brain exactly what changed, instantly updating its safety boundaries without a massive infrastructure overhead.</li>
+</ul>
+<hr>
+<h2 id="-your-personal--technical-improvement">📈 Your Personal &amp; Technical Improvement</h2>
+<p>By choosing to build this refined architecture over an unconstrained predictive model, your career leverage dramatically increases:</p>
+<ol>
+<li><strong>Mainstream Vision Dominance:</strong> You trade niche geospatial scripting libraries for industry-standard <strong>PyTorch, OpenCV, and Open3D</strong> pipelines. You are writing the exact linear algebra and computer vision code used by elite perception teams.</li>
+<li><strong>Strategic Foundational Engineering:</strong> By leveraging a pre-trained foundational backbone for feature extraction and building the multi-task decoders and graphics layers yourself, you demonstrate to recruiters that you understand how to balance production efficiency with custom mathematical engineering.</li>
+<li><strong>Architectural Defensibility:</strong> Because you are measuring actual pixel historical updates rather than forecasting the future, your quantitative evaluation metric is entirely credible, straightforward to debug, and simple to defend during live technical interviews.</li>
+</ol>
+<hr>
+<h2 id="-mathematical-breakdown-per-step">🧮 Mathematical Breakdown Per Step</h2>
+<p>This framework relies on standard machine learning loss formulations and 2D-to-3D computer vision geometry, mapping raw image updates directly into deterministic tensors.</p>
+<h3 id="1-feature-distance-metrics-step-2-siamese-feature-extractor">1. Feature Distance Metrics (Step 2: Siamese Feature Extractor)`</h3>
+<p>To identify structural changes, the weight-shared backbone projects the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">T_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">T_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> visual sequences into high-dimensional latent maps. The absolute element-wise distance is computed across corresponding tensor cells to isolate structural updates:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="bold">F</mi><mtext>diff</mtext></msub><mo>=</mo><mo stretchy="false">∣</mo><msub><mi mathvariant="bold">F</mi><msub><mi>T</mi><mn>2</mn></msub></msub><mo>−</mo><msub><mi mathvariant="bold">F</mi><msub><mi>T</mi><mn>1</mn></msub></msub><mo stretchy="false">∣</mo></mrow><annotation encoding="application/x-tex">\mathbf{F}_{\text{diff}} = \lvert \mathbf{F}_{T_2} - \mathbf{F}_{T_1} \rvert
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8361em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathbf">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">diff</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0001em;vertical-align:-0.2501em;"></span><span class="mopen">∣</span><span class="mord"><span class="mord mathbf">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:-0.1389em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0001em;vertical-align:-0.2501em;"></span><span class="mord"><span class="mord mathbf">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:-0.1389em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2501em;"><span></span></span></span></span></span></span><span class="mclose">∣</span></span></span></span></span></p>
+<h3 id="2-categorical-classification-geometry-step-3-semantic-change-head">2. Categorical Classification Geometry (Step 3: Semantic Change Head)`</h3>
+<p>To establish structural object perimeters, the model computes pixel-level probabilities. Optimization uses <strong>Binary Cross-Entropy (BCE) Loss</strong> or <strong>Focal Loss</strong> to balance heavy background tile distributions against sparse, localized urban transformation regions:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>change</mtext></msub><mo>=</mo><mo>−</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mrow><mo fence="true">[</mo><msub><mi>y</mi><mi>i</mi></msub><mi>log</mi><mo>⁡</mo><mo stretchy="false">(</mo><msub><mover accent="true"><mi>y</mi><mo>^</mo></mover><mi>i</mi></msub><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mi>log</mi><mo>⁡</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mover accent="true"><mi>y</mi><mo>^</mo></mover><mi>i</mi></msub><mo stretchy="false">)</mo><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{change}} = -\frac{1}{N} \sum_{i=1}^{N} \left[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">change</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.106em;vertical-align:-1.2777em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.3214em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.8283em;"><span style="top:-1.8723em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.2777em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">[</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1944em;"><span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">]</span></span></span></span></span></span></p>
+<h3 id="3-metric-height-change-regression-step-3-ndsm-height-head">3. Metric Height Change Regression (Step 3: nDSM Height Head)</h3>
+<p>Predicting the physical height differences (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">\Delta H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span>) in continuous meters requires an optimization target robust against out-of-distribution geometric anomalies (e.g., temporal crane interference or sensor noise). The head utilizes <strong>Huber Loss (Smooth L1 Loss)</strong>:</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>height</mtext></msub><mo>=</mo><mrow><mo fence="true">{</mo><mtable rowspacing="0.36em" columnalign="left left" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>H</mi><mo>−</mo><mi mathvariant="normal">Δ</mi><mover accent="true"><mi>H</mi><mo>^</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mtext>if </mtext><mo stretchy="false">∣</mo><mi mathvariant="normal">Δ</mi><mi>H</mi><mo>−</mo><mi mathvariant="normal">Δ</mi><mover accent="true"><mi>H</mi><mo>^</mo></mover><mo stretchy="false">∣</mo><mo>≤</mo><mi>δ</mi></mrow></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mrow><mi>δ</mi><mo stretchy="false">(</mo><mo stretchy="false">∣</mo><mi mathvariant="normal">Δ</mi><mi>H</mi><mo>−</mo><mi mathvariant="normal">Δ</mi><mover accent="true"><mi>H</mi><mo>^</mo></mover><mo stretchy="false">∣</mo><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>δ</mi><mo stretchy="false">)</mo></mrow></mstyle></mtd><mtd><mstyle scriptlevel="0" displaystyle="false"><mtext>otherwise</mtext></mstyle></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{height}} = \begin{cases} \frac{1}{2}(\Delta H - \Delta \hat{H})^2 &amp; \text{if } \lvert \Delta H - \Delta \hat{H} \rvert \le \delta \\ \delta (\lvert \Delta H - \Delta \hat{H} \rvert - \frac{1}{2}\delta) &amp; \text{otherwise} \end{cases}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">height</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3em;vertical-align:-1.25em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">{</span></span><span class="mord"><span class="mtable"><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mopen">(</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">Δ</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mopen">(∣</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">Δ</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mclose">∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:1em;"></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.69em;"><span style="top:-3.69em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">if </span></span><span class="mopen">∣</span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">Δ</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mclose">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03785em;">δ</span></span></span><span style="top:-2.25em;"><span class="pstrut" style="height:3.008em;"></span><span class="mord"><span class="mord text"><span class="mord">otherwise</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.19em;"><span></span></span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<h3 id="4-backprojection-to-3d-space-step-4-point-cloud-generator">4. Backprojection to 3D Space (Step 4: Point Cloud Generator)</h3>
+<p>Using camera intrinsic projection matrices <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">K</mi></mrow><annotation encoding="application/x-tex">\mathbf{K}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">K</span></span></span></span>, the model projects flat 2D image coordinates (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u, v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>) where change is detected back into 3D world coordinates <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="bold">P</mi><mo>=</mo><mo stretchy="false">(</mo><mi>X</mi><mo separator="true">,</mo><mi>Y</mi><mo separator="true">,</mo><mi>Z</mi><msup><mo stretchy="false">)</mo><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">\mathbf{P} = (X, Y, Z)^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0913em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">Y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span> based on the continuous metric height prediction <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mover accent="true"><mi>H</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\Delta \hat{H}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9468em;"></span><span class="mord">Δ</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span></span></span></span></span></span></span> (acting as the depth component <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi></mrow><annotation encoding="application/x-tex">Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">Z</span></span></span></span> from the sensor plane):`</p>
+<p class="katex-block"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="bold">P</mi><mo>=</mo><msup><mi mathvariant="bold">K</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo fence="true">(</mo><mtable rowspacing="0.16em" columnalign="center" columnspacing="1em"><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>u</mi></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mi>v</mi></mstyle></mtd></mtr><mtr><mtd><mstyle scriptlevel="0" displaystyle="false"><mn>1</mn></mstyle></mtd></mtr></mtable><mo fence="true">)</mo></mrow><mo>⋅</mo><mi mathvariant="normal">Δ</mi><mover accent="true"><mi>H</mi><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\mathbf{P} = \mathbf{K}^{-1} \begin{pmatrix} u \\ v \\ 1 \end{pmatrix} \cdot \Delta \hat{H}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6861em;"></span><span class="mord mathbf">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.6em;vertical-align:-1.55em;"></span><span class="mord"><span class="mord mathbf">K</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8641em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.05em;"><span class="pstrut" style="height:5.6em;"></span><span style="width:0.875em;height:3.600em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="3.600em" viewBox="0 0 875 3600"><path d="M863,9c0,-2,-2,-5,-6,-9c0,0,-17,0,-17,0c-12.7,0,-19.3,0.3,-20,1
+c-5.3,5.3,-10.3,11,-15,17c-242.7,294.7,-395.3,682,-458,1162c-21.3,163.3,-33.3,349,
+-36,557 l0,84c0.2,6,0,26,0,60c2,159.3,10,310.7,24,454c53.3,528,210,
+949.7,470,1265c4.7,6,9.7,11.7,15,17c0.7,0.7,7,1,19,1c0,0,18,0,18,0c4,-4,6,-7,6,-9
+c0,-2.7,-3.3,-8.7,-10,-18c-135.3,-192.7,-235.5,-414.3,-300.5,-665c-65,-250.7,-102.5,
+-544.7,-112.5,-882c-2,-104,-3,-167,-3,-189
+l0,-92c0,-162.7,5.7,-314,17,-454c20.7,-272,63.7,-513,129,-723c65.3,
+-210,155.3,-396.3,270,-559c6.7,-9.3,10,-15.3,10,-18z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.55em;"><span></span></span></span></span></span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.21em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">u</span></span></span><span style="top:-3.01em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span><span style="top:-1.81em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.55em;"><span></span></span></span></span></span></span></span><span class="mclose"><span class="delimsizing mult"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.05em;"><span style="top:-4.05em;"><span class="pstrut" style="height:5.6em;"></span><span style="width:0.875em;height:3.600em;"><svg xmlns="http://www.w3.org/2000/svg" width="0.875em" height="3.600em" viewBox="0 0 875 3600"><path d="M76,0c-16.7,0,-25,3,-25,9c0,2,2,6.3,6,13c21.3,28.7,42.3,60.3,
+63,95c96.7,156.7,172.8,332.5,228.5,527.5c55.7,195,92.8,416.5,111.5,664.5
+c11.3,139.3,17,290.7,17,454c0,28,1.7,43,3.3,45l0,9
+c-3,4,-3.3,16.7,-3.3,38c0,162,-5.7,313.7,-17,455c-18.7,248,-55.8,469.3,-111.5,664
+c-55.7,194.7,-131.8,370.3,-228.5,527c-20.7,34.7,-41.7,66.3,-63,95c-2,3.3,-4,7,-6,11
+c0,7.3,5.7,11,17,11c0,0,11,0,11,0c9.3,0,14.3,-0.3,15,-1c5.3,-5.3,10.3,-11,15,-17
+c242.7,-294.7,395.3,-681.7,458,-1161c21.3,-164.7,33.3,-350.7,36,-558
+l0,-144c-2,-159.3,-10,-310.7,-24,-454c-53.3,-528,-210,-949.7,
+-470,-1265c-4.7,-6,-9.7,-11.7,-15,-17c-0.7,-0.7,-6.7,-1,-18,-1z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.55em;"><span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9468em;"></span><span class="mord">Δ</span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9468em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span><span style="top:-3.2523em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">^</span></span></span></span></span></span></span></span></span></span></span></p>
+<hr>
+<h2 id="️-core-technical-innovations">🛠️ Core Technical Innovations</h2>
+<ol>
+<li><strong>Spatiotemporal Siamese Token Fusion:</strong> Implements a shared-weight dual-stream encoder that maps a pre-construction slice (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">T_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) and post-construction slice (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">T_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>) into a unified difference embedding matrix, turning complex temporal modeling into a stable feature-subtraction task.</li>
+<li><strong>Gated Height Estimation Head:</strong> Routes visual features exclusively through a change-detection mask threshold, ensuring the model only computes heavy metric above-ground height predictions (nDSM) on altered or newly constructed infrastructure pixels [1_1].</li>
+<li><strong>Linear Geometry Gating:</strong> Fuses the estimated per-pixel height map with camera intrinsic matrices inside an Open3D environment, instantly constructing a bounded 3D bounding box matrix without human intervention.</li>
+</ol>
+<hr>
+<h2 id="-optimized-repository-architecture">📦 Optimized Repository Architecture</h2>
+<p><code>```text</code><br>
+<code>├── data_pipeline/         # Step 1: Ingests M4Heights or DFC2019 data into raw NumPy image arrays</code><br>
+<code>├── models/</code><br>
+<code>│   ├── siamese_encoder.py # Step 2: Instantiates pre-trained backbone via timm; implements weight-shared streams</code><br>
+<code>│   ├── multi_head_cv.py   # Step 3: Custom change classification head &amp; Huber regression height head</code><br>
+<code>├── spatial_3d/            # Step 4: Inverse camera calibration backprojection &amp; Open3D Point Cloud generation</code><br>
+<code>└── evaluation/            # Step 5: Metrics computation (IoU &amp; MAE) &amp; Geographic holdout dashboard</code><br>
+<code>```</code></p>
+<hr>
+<h2 id="-technical-code-reference-modelsmulti_head_cvpy">💻 Technical Code Reference (<code>models/multi_head_cv.py</code>)</h2>
+<p>Below is the concrete, clean mathematical optimization script written in PyTorch that wires the joint multi-task training objectives for the perception framework:</p>
+<p><code>```python</code><br>
+<code>import torch</code><br>
+<code>import torch.nn as nn</code><br>
+<code>import torch.nn.functional as F</code></p>
+<p><code>class MultiTaskLoss(nn.Module):</code><br>
+<code>def __init__(self, delta=1.0, weight_change=1.0, weight_height=5.0):</code><br>
+<code>&quot;&quot;&quot;</code><br>
+<code>Handles Joint Optimization for the 4D Map Maintenance Perception Stack.</code><br>
+<code>Balances categorical cross-entropy with a geometric height regression head.</code><br>
+<code>&quot;&quot;&quot;</code><br>
+<code>super(MultiTaskLoss, self).__init__()</code><br>
+<code>self.bce_loss = nn.BCEWithLogitsLoss()</code><br>
+<code>self.huber_loss = nn.HuberLoss(delta=delta, reduction='none')</code><br>
+<code>self.w_change = weight_change</code><br>
+<code>self.w_height = weight_height</code></p>
+<pre><code>`def forward(self, pred_change, pred_height, target_change, target_height):`  
+    `&quot;&quot;&quot;`  
+    `Args:`  
+        `pred_change (Tensor): Raw logits for change mask prediction [B, 1, H, W]`  
+        `pred_height (Tensor): Continuous estimated height values [B, 1, H, W]`  
+        `target_change (Tensor): Binary ground truth change mask [B, 1, H, W]`  
+        `target_height (Tensor): Ground truth nDSM metric delta-height map [B, 1, H, W]`  
+    `&quot;&quot;&quot;`  
+    `# 1. Compute Binary Cross-Entropy Loss for 2D Spatial Layout`  
+    `loss_change = self.bce_loss(pred_change, target_change)`  
+      
+    `# 2. Masked Height Regression: Apply a strict geometric gate.`  
+    `# This isolates loss adjustments strictly to changed pixels to protect gradients.`
+</code></pre>
+<p>change_mask = (target_change &gt; 0.5).float()</p>
+<p># Calculate pixel-wise Huber Loss values<br>
+raw_huber = self.huber_loss(pred_height, target_height)</p>
+<p># Enforce spatial gating and calculate the conditional mean<br>
+masked_huber = raw_huber * change_mask<br>
+num_changed_pixels = change_mask.sum()</p>
+<p>if num_changed_pixels &gt; 0:<br>
+loss_height = masked_huber.sum() / num_changed_pixels<br>
+else:<br>
+loss_height = torch.tensor(0.0, device=pred_change.device, requires_grad=True)</p>
+<p># 3. Compute Linearly Weighted Combined Loss<br>
+total_loss = (self.w_change * loss_change) + (self.w_height * loss_height)</p>
+<p>return total_loss, loss_change, loss_height<br>
+```</p>
+<h2 id="---">---</h2>
+<p><strong>Detailed Technical Step-by-Step Implementation Framework</strong></p>
+<h2 id="step-1-ingestion--tensor-alignment-service"><strong>Step 1: Ingestion &amp; Tensor Alignment Service</strong></h2>
+<blockquote>
+<ul>
+<li><strong>In Layman’s Terms:</strong> Ingesting pre-paired image arrays from academic datasets, smoothing lighting and exposure anomalies using standard vision algorithms, and loading them as raw mathematical tensors so they perfectly overlap down to the exact pixel.</li>
+<li><strong>Technologies Used:</strong> OpenCV, NumPy, SciPy</li>
+<li><strong>Methods:</strong> Image normalization, sub-pixel registration, affine warping, channel slicing.</li>
+<li><strong>Data Involved:</strong> Publicly available benchmark pairs (<strong>M4Heights</strong> or <strong>IEEE GRSS DFC2019</strong>) containing perfectly co-registered aerial optical frames representing steps <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">T\_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_1</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">T\_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_2</span></span></span></span> alongside matched ground-truth height data [1_1, 1_2].</li>
+<li><strong>Technical Difficulty:</strong> Medium</li>
+<li><strong>Time Commitment:</strong> 15 Hours</li>
+<li><strong>Detailed Technical Sub-steps:</strong></li>
+</ul>
+</blockquote>
+<ol>
+<li>Stream data arrays from the M4Heights or DFC2019 dataset and read them into raw memory buffers as uint8 arrays using OpenCV [1_1, 1_2].</li>
+<li>Apply histogram equalization or linear intensity mapping to balance exposure variations between frames.</li>
+<li>Calculate feature keypoints using ORB or SIFT descriptors via OpenCV to construct an affine transformation matrix, warping the <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">T\_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_2</span></span></span></span> tensor into perfect alignment with <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">T\_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_1</span></span></span></span>.</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>Learning Resources &amp; Tutorials:</strong></li>
+</ul>
+</blockquote>
+<ul>
+<li><em>Image Transformations:</em> Follow the <a href="https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html">OpenCV Image Processing Tutorial</a> to master color tracking and tensor matrix reshaping.</li>
+<li><em>Sub-pixel Registration:</em> Walk through the <a href="https://docs.scipy.org/doc/scipy/reference/ndimage.html">SciPy ndimage registration manual</a> to understand multi-dimensional coordinate shifts.</li>
+</ul>
+<h2 id="step-2-siamese-spatial-feature-extractor"><strong>Step 2: Siamese Spatial Feature Extractor</strong></h2>
+<blockquote>
+<ul>
+<li><strong>In Layman’s Terms:</strong> Loading an existing, pre-trained image-recognition network from an open-source library. You feed both images into this identical network, extract the core shape data, and subtract the older frame's features from the newer frame's features to instantly highlight what changed.</li>
+<li><strong>Technologies Used:</strong> PyTorch, Timm (Torch Image Models)</li>
+<li><strong>Methods:</strong> Weight-shared deep network streams, temporal concatenation channels, geometric feature difference calculation, leveraging ImageNet pre-trained backbones.</li>
+<li><strong>Data Involved:</strong> Standardized dual-temporal imagery tensor arrays (B × C × H × W).</li>
+<li><strong>Technical Difficulty:</strong> Medium</li>
+<li><strong>Time Commitment:</strong> 15 Hours</li>
+<li><strong>Detailed Technical Sub-steps:</strong></li>
+</ul>
+</blockquote>
+<ol>
+<li>Initialize an encoder skeleton (such as an EfficientNet or a Vision Transformer variant via the timm library) initialized with pre-trained ImageNet weights.</li>
+<li>Build a custom wrapper class ensuring that both <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">T\_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_1</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">T\_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_2</span></span></span></span> visual matrices pass through the identical encoder layer to share weight states.</li>
+<li>Construct a differential block layer that subtracts <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">T\_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_1</span></span></span></span> tensors from <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mi mathvariant="normal">_</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">T\_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9933em;vertical-align:-0.31em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mord">_2</span></span></span></span> tensors to produce a localized scene change representation.</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>Learning Resources &amp; Tutorials:</strong></li>
+</ul>
+</blockquote>
+<ul>
+<li><em>Foundational Tensor Engineering:</em> Review the <a href="https://pytorch.org/tutorials/beginner/pytorch_with_examples.html">PyTorch Custom Layer Documentation</a> to understand multi-stream memory tracking.</li>
+<li><em>Model Skeletons:</em> Walk through the timm feature extraction guide to handle mid-layer feature extraction cleanly.</li>
+</ul>
+<h2 id="step-3-dual-classification-and-metric-height-sub-heads"><strong>Step 3: Dual Classification and Metric Height Sub-Heads</strong></h2>
+<blockquote>
+<ul>
+<li><strong>In Layman’s Terms:</strong> Building the two custom &quot;output heads&quot; of the AI from scratch. Head 1 maps out a 2D line around the object that changed. Head 2 looks specifically inside that custom outline and estimates exactly how tall the new building is in meters.</li>
+<li><strong>Technologies Used:</strong> PyTorch, PyTorch Lightning</li>
+<li><strong>Methods:</strong> Deep Multi-Task learning dependencies, masked-grid continuous prediction gating, custom joint loss balancing equations.</li>
+<li><strong>Data Involved:</strong> Mixed spatial difference vector maps paired with ground-truth nDSM volumetric vertical indicators [1_1].</li>
+<li><strong>Technical Difficulty:</strong> Hard</li>
+<li><strong>Time Commitment:</strong> 25 Hours</li>
+<li><strong>Detailed Technical Sub-steps:</strong></li>
+</ul>
+</blockquote>
+<ol>
+<li>Split the network pipeline into two parallel multi-task decoding branches written completely from scratch.</li>
+<li><strong>Branch A (Semantic Mask Head):</strong> Implements a segmentation mask layer using Cross-Entropy Loss to predict categorical boundaries of the updated objects.</li>
+<li><strong>Branch B (nDSM Height Head):</strong> Attaches a continuous regression layer using Huber Loss to output exact object elevation changes (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mspace linebreak="newline"></mspace><mi>D</mi><mi>e</mi><mi>l</mi><mi>t</mi><mi>a</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">\\Delta H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">De</span><span class="mord mathnormal">lt</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span>) in meters [1_1].</li>
+<li>Implement spatial masking to force the height head to prioritize optimization exclusively on areas where the Semantic Mask Head registers object modifications.</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>Learning Resources &amp; Tutorials:</strong></li>
+</ul>
+</blockquote>
+<ul>
+<li><em>Multi-Task Optimization:</em> Go through the <a href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning Multi-Task Implementation Code Pattern</a> documentation to configure distinct optimization losses across parallel model decoding heads.</li>
+<li><em>Advanced Losses:</em> Study the Huber Loss mathematical limits directly on the PyTorch documentation site.</li>
+</ul>
+<h2 id="step-4-3d-point-cloud-and-scene-graph-compiler"><strong>Step 4: 3D Point Cloud and Scene Graph Compiler</strong></h2>
+<blockquote>
+<ul>
+<li><strong>In Layman’s Terms:</strong> Taking the flat 2D lines and height numbers from your model and reprojecting them into 3D world space using standard camera physics formulas. It converts flat pixels into 3D Point Clouds, lumps individual structures together, and defines a clean 3D coordinate box around them.</li>
+<li><strong>Technologies Used:</strong> Open3D, OpenCV, NumPy</li>
+<li><strong>Methods:</strong> Camera projection backprojection, point cloud clustering, 3D Oriented Bounding Box (OBB) calculation, spatial relationship serialization.</li>
+<li><strong>Data Involved:</strong> Predicted pixel masks, linear height indicators, and sensor calibration vectors.</li>
+<li><strong>Technical Difficulty:</strong> Hard</li>
+<li><strong>Time Commitment:</strong> 20 Hours</li>
+<li><strong>Detailed Technical Sub-steps:</strong></li>
+</ul>
+</blockquote>
+<ol>
+<li>Use a mask filtering function via OpenCV to find the exact coordinate indices (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u, v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">u</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>) where changes occurred.</li>
+<li>Write a mathematical backprojection pass in NumPy using the inverse camera intrinsic matrix <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mspace linebreak="newline"></mspace><mi>m</mi><mi>a</mi><mi>t</mi><mi>h</mi><mi>b</mi><mi>f</mi><msup><mi>K</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\\mathbf{K}^{-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="mspace newline"></span><span class="base"><span class="strut" style="height:1.0085em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">ma</span><span class="mord mathnormal">t</span><span class="mord mathnormal">hb</span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span></span></span></span> to convert the pixels into open3d.geometry.PointCloud coordinates, using the height prediction as the vertical dimension.</li>
+<li>Apply an unsupervised clustering loop (like DBSCAN) in Open3D to isolate distinct spatial objects, and compute their 3D Oriented Bounding Boxes (OBB). Export the final metrics (Centroids, bounding arrays) into a production JSON Scene Graph payload.</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>Learning Resources &amp; Tutorials:</strong></li>
+</ul>
+</blockquote>
+<ul>
+<li><em>3D Point Clouds:</em> Follow the official <a href="http://www.open3d.org/docs/release/tutorial/geometry/pointcloud.html">Open3D Point Cloud Processing Guide</a> to understand spatial manipulation vectors.</li>
+<li><em>Geometry Projections:</em> Study the OpenCV Camera Calibration and 3D Reconstruction Guide to master projection matrix multiplication.</li>
+</ul>
+<h2 id="step-5-system-performance-benchmarking--evaluation"><strong>Step 5: System Performance Benchmarking &amp; Evaluation</strong></h2>
+<blockquote>
+<ul>
+<li><strong>In Layman’s Terms:</strong> Testing your entire custom codebase on an independent city block the AI has never encountered before to prove its accuracy. We measure how well it draws object outlines (IoU) and its 3D height mistake margin in meters (MAE).</li>
+<li><strong>Technologies Used:</strong> Scikit-Learn, Matplotlib, Weights &amp; Biases</li>
+<li><strong>Methods:</strong> Holdout matrix evaluation, point cloud error profiling, latency tracking.</li>
+<li><strong>Data Involved:</strong> Completely separate evaluation datasets from an independent tracking region.</li>
+<li><strong>Technical Difficulty:</strong> Easy</li>
+<li><strong>Time Commitment:</strong> 10 Hours</li>
+<li><strong>Detailed Technical Sub-steps:</strong></li>
+</ul>
+</blockquote>
+<ol>
+<li>Enforce a strict separation barrier by ensuring your evaluation data sequences are completely hidden from the neural networks during optimization loops.</li>
+<li>Run inference across the holdout frames to generate structural performance curves.</li>
+<li>Calculate and report precise quantitative markers: report the intersection-over-union (IoU) of your change detection masks, and document the Mean Absolute Error (MAE) of your 3D height predictions in absolute meters.</li>
+</ol>
+<blockquote>
+<ul>
+<li><strong>Learning Resources &amp; Tutorials:</strong></li>
+</ul>
+</blockquote>
+<ul>
+<li><em>Experiment Tracking Setup:</em> Read the <a href="https://docs.wandb.ai/guides/integrations/pytorch">Weights &amp; Biases PyTorch Integration Tutorial</a> to gracefully log training loss curves, system inference speeds, and validation footprint IoU.</li>
+</ul>
+<h2 id="----1">---</h2>
+<p><strong>📝 High-Signal Resume Performance Bullet Points</strong></p>
+<h2 id="for-3d-perception-autonomous-driving--robotics-roles"><strong>For 3D Perception, Autonomous Driving, &amp; Robotics Roles</strong></h2>
+<blockquote>
+<ul>
+<li><strong>Architected a dual-stream spatiotemporal Siamese network</strong> in PyTorch that leverages pre-trained foundational encoders to isolate structural object deviations for automated HD map maintenance.</li>
+<li><strong>Engineered a multi-task spatial decoding architecture</strong> from scratch that outputs categorical semantic change masks and dense metric object height change estimates (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mspace linebreak="newline"></mspace><mi>D</mi><mi>e</mi><mi>l</mi><mi>t</mi><mi>a</mi><mi>H</mi></mrow><annotation encoding="application/x-tex">\\Delta H</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">De</span><span class="mord mathnormal">lt</span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span></span></span></span>) optimized via multi-head regression loss [1_1].</li>
+<li><strong>Developed a 4D spatial scene graph compiler</strong> using <em>OpenCV</em> and <em>Open3D</em> to programmatically backproject 2D feature coordinates into 3D world space, compute Oriented Bounding Boxes (OBB), and serialize structural map topologies into JSON formats.</li>
+</ul>
+</blockquote>
+<h2 id="for-applied-ml--core-software-engineering-roles"><strong>For Applied ML &amp; Core Software Engineering Roles</strong></h2>
+<blockquote>
+<ul>
+<li><strong>Built an asynchronous, decoupled tensor processing pipeline</strong> that normalizes multi-date frame matrices and camera intrinsic paths to a unified coordinate grid, removing sensor layout alignment artifacts.</li>
+<li><strong>Optimized perception inference latency profiles</strong> by implementing a gated masking module that restricts intensive 3D point cloud and geometric regressions exclusively to modified pixel coordinates.</li>
+<li><strong>Enforced a strict matrix holdout verification layout</strong> during model evaluations, maintaining zero data leakage to deliver auditable, verifiable metrics for semantic footprint IoU and height prediction MAE [1_2].</li>
+</ul>
+</blockquote>
+<p><code>***</code></p>
+<p><code>Now that the entire core narrative, timeline matrices, code blocks, and newly structured strategic gap differentiators are cleanly combined, we are ready to code the initial script modules.</code></p>
+<p><code>Let me know which primary tool block we should initialize:</code><br>
+<code>*   **`models/siamese_encoder.py` (Step 2):** We can build out the custom PyTorch layer architecture that maps the pre-trained foundational model tensor subtraction logic.</code><br>
+<code>*   **`spatial_3d/point_cloud_generator.py` (Step 4):** We can write the concrete Open3D matrix multiplication pipeline to project flat pixels into bounding volumes.</code></p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

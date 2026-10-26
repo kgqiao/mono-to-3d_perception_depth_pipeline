@@ -1,5 +1,5 @@
 # geom.py: depth -> 3D points, the ground plane, and depth metrics (steps D1 to D3).
-# Same functions as depthkit.py in the Wing depth-to-3D starter. If you already wrote them there, paste yours in.
+# Same functions as depthkit.py in the Wing depth-to-3D starter.
 import numpy as np
 
 

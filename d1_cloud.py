@@ -3,7 +3,10 @@
 #   python d1_cloud.py --synthetic
 import argparse
 import numpy as np
-from geom import backproject, K_from_P
+import open3d as o3d
+
+from geom import backproject, K_from_P #import written functions from geom.py
+
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--depth"); ap.add_argument("--calib"); ap.add_argument("--cam", type=int, default=2)
@@ -22,12 +25,16 @@ else:
     lidar = np.load(a.lidar) if a.lidar else None
 
 pts, u, v = backproject(depth, K)
+
 print(f"{len(pts)} points, z from {pts[:, 2].min():.1f} to {pts[:, 2].max():.1f} m")
+
 if lidar is not None:
     m = (lidar > 0) & (depth > 0)
     ratio = np.median(depth[m] / lidar[m])
     print(f"median depth / LiDAR on {m.sum()} pixels = {ratio:.3f}  -> scale error {100 * (ratio - 1):+.1f}%")
-import open3d as o3d
+
+
+# Create Point Cloud from Open3D
 pc = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(pts))
 o3d.io.write_point_cloud("out/d1_cloud.ply", pc)
 print("wrote out/d1_cloud.ply")
