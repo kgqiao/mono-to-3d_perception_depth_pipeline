@@ -1,3 +1,4 @@
+pathlib
 numpy
 scipy
 opencv-python
@@ -7,8 +8,9 @@ pandas
 matplotlib
 pillow
 pytest
-pybind11        # D11 only
-# depth model (D1, D6): install torch from pytorch.org first if you want the GPU build
+pybind11 # D11 only
+
+# depth model (D1, D6): install torch from pytorch.org first if GPU build is desired
 torch
 transformers
 # optional: imagecorruptions (D7; corrupt.py falls back to OpenCV without it), evo (trajectory evaluation)

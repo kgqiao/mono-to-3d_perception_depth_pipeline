@@ -1,9 +1,25 @@
 # D1-D3: a ray-cast flat road and a box where the right answers are known
 import numpy as np
-from geom import backproject, ransac_plane, height_above, metrics
+from geom import load_depth_png, backproject, ransac_plane, height_above, metrics
 
 K = np.array([[721.5, 0, 609.6], [0, 721.5, 172.9], [0, 0, 1.0]])
 H, W, CAM_H = 352, 1216, 1.65
+
+
+#Testing load_depth_png(path)
+def test_load_depth_png_returns_metres(tmp_path):
+    raw = np.zeros((2, 2), dtype=np.uint16)
+    raw[0, 0] = 256 * 10     # 10 m in KITTI's convention
+    raw[0, 1] = 2560 + 128   # value above 255, so an 8-bit read would fail here
+    path = tmp_path / "d.png"
+    cv2.imwrite(str(path), raw)
+
+    depth = load_depth_png(path)
+
+    assert depth.dtype == np.float32
+    assert depth.shape == (2, 2)
+    assert depth[0, 0] == 10.0
+    assert depth[0, 1] == 10.5
 
 
 def flat_road(box=True):

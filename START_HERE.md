@@ -11,19 +11,26 @@ The lessons, tasks and checks for each step are in the Project lab, Perception t
 - Every script has `--synthetic`, so you can run each step end to end before KITTI finishes downloading.
 
 ## Setup (Windows, PowerShell, from this folder)
-    py -3.11 -m venv .venv
-    .venv\Scripts\Activate.ps1
-    pip install -r requirements.txt
-    python -m pytest -q          # at first: 19 fail, 6 pass, 1 skipped (the C++ test, until you build it). The failures are your to-do list.
 
+    ```bash
+    py -3.11 -m venv mono3d_venv
+    mono3d_venv\Scripts\Activate.ps1
+    mono3d_venv\Scripts\activate
+    pip install -r requirements.txt
+    python -m pytest -q   #Expected Output R FIRST: 19 fail, 6 pass, 1 skipped (the C++ test, until you build it).
+    ```
 ## Data (put it under data/)
 - KITTI odometry: grayscale images (about 22 GB), calibration, ground-truth poses: https://www.cvlibs.net/datasets/kitti/eval_odometry.php
+- 
   Layout: data/kitti/sequences/00/image_0/*.png, data/kitti/sequences/00/calib.txt, data/kitti/poses/00.txt
   Tip: start with one short sequence (04 is about 270 frames, mostly straight; 07 has turns).
+
 - D1-D3 depth evaluation uses KITTI depth (val_selection_cropped), the same data as the Wing depth-to-3D build.
-- D10 Velodyne (very large) and D12 KITTI raw OXTS: only when you reach those optional steps.
+- 
+- D10 Velodyne (very large) and D12 KITTI raw OXTS: only when reach those optional steps.
 
 ## Order
+
 1. D1-D3: `geom.py` (Same as Wing build)
    `python -m pytest -q tests/test_geom.py`
     then `python d1_cloud.py --synthetic`, 
@@ -57,34 +64,3 @@ The lessons, tasks and checks for each step are in the Project lab, Perception t
     python -m pytest -q tests/test_cpp.py
     python bench_match.py
 
-
-
-# project_3d_perception_pipeline
-Monocular to 3D Perception Pipeline
-
-### Primary Reference: Depth Anything V2 Codebase
-
-- https://depth-anything-v2.github.io/
-- Depth Anything V2 Paper
-- https://github.com/DepthAnything/Depth-Anything-V2
-- Live Simulation: https://huggingface.co/spaces/depth-anything/Depth-Anything-V2
-
-### References for Tutorials:
-
-- https://visionbrick.com/depth-anything-v2-generating-depth-maps-from-rgb-images/
-- https://www.youtube.com/watch?v=1Lt4p-cf_6Y
-- https://www.youtube.com/watch?v=BoibnBIw5DA
-
-### References for Supplementary Libraries:
-
-- Color Maps for Matplotlib: https://matplotlib.org/stable/users/explain/colors/colormaps.html
-
-
-
-
-
-### ABOUT CONCEPTS:
-
-Tutorial: https://www.youtube.com/watch?v=BoibnBIw5DA
-- Monocular Depth Estimation = single camera, showing how far or close something is
-- Training Method: Synthetic labeled dataset, pseudo label dataset

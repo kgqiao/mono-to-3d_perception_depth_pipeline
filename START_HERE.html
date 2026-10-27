@@ -151,18 +151,30 @@ The lessons, tasks and checks for each step are in the Project lab, Perception t
 <li>Every script has <code>--synthetic</code>, so you can run each step end to end before KITTI finishes downloading.</li>
 </ul>
 <h2 id="setup-windows-powershell-from-this-folder">Setup (Windows, PowerShell, from this folder)</h2>
-<pre><code>py -3.11 -m venv .venv
-.venv\Scripts\Activate.ps1
+<pre><code>```bash
+py -3.11 -m venv mono3d_venv
+mono3d_venv\Scripts\Activate.ps1
+mono3d_venv\Scripts\activate
 pip install -r requirements.txt
-python -m pytest -q          # at first: 19 fail, 6 pass, 1 skipped (the C++ test, until you build it). The failures are your to-do list.
+python -m pytest -q   #Expected Output R FIRST: 19 fail, 6 pass, 1 skipped (the C++ test, until you build it).
+```
 </code></pre>
 <h2 id="data-put-it-under-data">Data (put it under data/)</h2>
 <ul>
-<li>KITTI odometry: grayscale images (about 22 GB), calibration, ground-truth poses: <a href="https://www.cvlibs.net/datasets/kitti/eval_odometry.php">https://www.cvlibs.net/datasets/kitti/eval_odometry.php</a>
-Layout: data/kitti/sequences/00/image_0/*.png, data/kitti/sequences/00/calib.txt, data/kitti/poses/00.txt
-Tip: start with one short sequence (04 is about 270 frames, mostly straight; 07 has turns).</li>
-<li>D1-D3 depth evaluation uses KITTI depth (val_selection_cropped), the same data as the Wing depth-to-3D build.</li>
-<li>D10 Velodyne (very large) and D12 KITTI raw OXTS: only when you reach those optional steps.</li>
+<li>
+<p>KITTI odometry: grayscale images (about 22 GB), calibration, ground-truth poses: <a href="https://www.cvlibs.net/datasets/kitti/eval_odometry.php">https://www.cvlibs.net/datasets/kitti/eval_odometry.php</a></p>
+</li>
+<li>
+<p>Layout: data/kitti/sequences/00/image_0/*.png, data/kitti/sequences/00/calib.txt, data/kitti/poses/00.txt
+Tip: start with one short sequence (04 is about 270 frames, mostly straight; 07 has turns).</p>
+</li>
+<li>
+<p>D1-D3 depth evaluation uses KITTI depth (val_selection_cropped), the same data as the Wing depth-to-3D build.</p>
+</li>
+<li></li>
+<li>
+<p>D10 Velodyne (very large) and D12 KITTI raw OXTS: only when reach those optional steps.</p>
+</li>
 </ul>
 <h2 id="order">Order</h2>
 <ol>
@@ -206,31 +218,6 @@ python setup.py build_ext --inplace
 python -m pytest -q tests/test_cpp.py
 python bench_match.py
 </code></pre>
-<h1 id="project_3d_perception_pipeline">project_3d_perception_pipeline</h1>
-<p>Monocular to 3D Perception Pipeline</p>
-<h3 id="primary-reference-depth-anything-v2-codebase">Primary Reference: Depth Anything V2 Codebase</h3>
-<ul>
-<li><a href="https://depth-anything-v2.github.io/">https://depth-anything-v2.github.io/</a></li>
-<li>Depth Anything V2 Paper</li>
-<li><a href="https://github.com/DepthAnything/Depth-Anything-V2">https://github.com/DepthAnything/Depth-Anything-V2</a></li>
-<li>Live Simulation: <a href="https://huggingface.co/spaces/depth-anything/Depth-Anything-V2">https://huggingface.co/spaces/depth-anything/Depth-Anything-V2</a></li>
-</ul>
-<h3 id="references-for-tutorials">References for Tutorials:</h3>
-<ul>
-<li><a href="https://visionbrick.com/depth-anything-v2-generating-depth-maps-from-rgb-images/">https://visionbrick.com/depth-anything-v2-generating-depth-maps-from-rgb-images/</a></li>
-<li><a href="https://www.youtube.com/watch?v=1Lt4p-cf_6Y">https://www.youtube.com/watch?v=1Lt4p-cf_6Y</a></li>
-<li><a href="https://www.youtube.com/watch?v=BoibnBIw5DA">https://www.youtube.com/watch?v=BoibnBIw5DA</a></li>
-</ul>
-<h3 id="references-for-supplementary-libraries">References for Supplementary Libraries:</h3>
-<ul>
-<li>Color Maps for Matplotlib: <a href="https://matplotlib.org/stable/users/explain/colors/colormaps.html">https://matplotlib.org/stable/users/explain/colors/colormaps.html</a></li>
-</ul>
-<h3 id="about-concepts">ABOUT CONCEPTS:</h3>
-<p>Tutorial: <a href="https://www.youtube.com/watch?v=BoibnBIw5DA">https://www.youtube.com/watch?v=BoibnBIw5DA</a></p>
-<ul>
-<li>Monocular Depth Estimation = single camera, showing how far or close something is</li>
-<li>Training Method: Synthetic labeled dataset, pseudo label dataset</li>
-</ul>
 
             
             
