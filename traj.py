@@ -90,15 +90,92 @@ def umeyama(src, dst, with_scale=True):
 def ate(est_pos, gt_pos, align="se3"):
     """Absolute trajectory error: RMSE of positions after alignment.
     align: 'sim3' (with scale, only for a unit-scale baseline), 'se3' (rigid; use for metric variants), 'none'."""
-    #D5): align est onto gt with umeyama (or not), then RMSE of the position differences")
 
+    # Convert inputs to numpy arrays (Shape: N x 3)
+    est = np.asarray(est_pos, dtype=float)
+    gt = np.asarray(gt_pos, dtype=float)
+    
+    # 1. Align the estimated trajectory onto the ground truth based on the requested method
+    if align == "sim3":
+        # Similarity alignment (Scale + Rotation + Translation)
+        s, R, t = umeyama(est, gt, with_scale=True)
+        # Apply transformation to every estimated point: s * (R @ x) + t
+        # Transpose and broadcasting tricks let us do this efficiently for all N points
+        est_aligned = s * (est @ R.T) + t
+        
+    elif align == "se3":
+        # Rigid body alignment (Rotation + Translation only, Scale is fixed to 1.0)
+        s, R, t = umeyama(est, gt, with_scale=False)
+        # Apply transformation: 1.0 * (R @ x) + t
+        est_aligned = (est @ R.T) + t
+        
+    elif align == "none":
+        # No alignment: evaluate the raw trajectories exactly as they are
+        est_aligned = est
+        
+    else:
+        raise ValueError(f"Unknown alignment type: {align}")
+        
+    # 2. Compute the 3D position differences for each frame
+    # Difference vector for each coordinate (N x 3)
+    differences = est_aligned - gt
+    
+    # 3. Calculate the Root Mean Squared Error (RMSE)
+    # Compute squared distances for each point: dx^2 + dy^2 + dz^2
+    squared_errors = np.sum(differences ** 2, axis=1)
+    
+    # Take the mean of those squares, then take the square root
+    rmse = np.sqrt(np.mean(squared_errors))
+    
+    return float(rmse)
 
 
 def rpe(est_T, gt_T, delta=1):
     """Relative pose error over `delta` frames: mean translation error (m) and mean rotation error (deg)."""
-    raise NotImplementedError("You write this (D5): for each i: error = inv(gt motion i->i+delta) @ est motion i->i+delta; take |t| and the rotation angle")
-
-
+    N = len(est_T)
+    
+    # We can only compute relative errors if we have enough frames left to jump by delta
+    if N <= delta:
+        return 0.0, 0.0
+        
+    t_errors = []
+    r_errors = []
+    
+    # Loop through all possible frame pairs separated by delta
+    for i in range(N - delta):
+        # 1. Compute the true relative motion from frame i to frame i+delta
+        # Rule: T_w_idx2 = T_w_idx1 @ T_idx1_idx2 -> T_idx1_idx2 = inv(T_w_idx1) @ T_w_idx2
+        T_gt_i = gt_T[i]
+        T_gt_idelta = gt_T[i + delta]
+        motion_gt = np.linalg.inv(T_gt_i) @ T_gt_idelta
+        
+        # 2. Compute the estimated relative motion over the same window
+        T_est_i = est_T[i]
+        T_est_idelta = est_T[i + delta]
+        motion_est = np.linalg.inv(T_est_i) @ T_est_idelta
+        
+        # 3. Compute the error transformation between the two motions
+        # Error = inv(gt_motion) @ est_motion
+        T_err = np.linalg.inv(motion_gt) @ motion_est
+        
+        # 4. Extract translation error magnitude |t| (in meters)
+        t_err_vec = T_err[:3, 3]
+        t_err_mag = np.linalg.norm(t_err_vec)
+        t_errors.append(t_err_mag)
+        
+        # 5. Extract rotation error angle (in degrees) using the trace shortcut
+        R_err = T_err[:3, :3]
+        trace = np.trace(R_err)
+        cos_theta = (trace - 1.0) / 2.0
+        cos_theta = np.clip(cos_theta, -1.0, 1.0)
+        r_err_deg = np.degrees(np.arccos(cos_theta))
+        r_errors.append(r_err_deg)
+        
+    # 6. Calculate the average errors across all windows
+    mean_t_error = np.mean(t_errors)
+    mean_r_error = np.mean(r_errors)
+    
+    return float(mean_t_error), float(mean_r_error)
 
 
 def kitti_drift(est_T, gt_T, lengths=(100, 200, 300, 400, 500, 600, 700, 800), step=10):

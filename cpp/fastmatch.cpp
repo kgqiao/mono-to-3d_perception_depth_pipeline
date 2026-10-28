@@ -1,19 +1,20 @@
-// fastmatch.cpp: brute-force Hamming matching in C++ (optional step D11), exposed to Python with pybind11.
+// fastmatch.cpp: brute-force Hamming matching in C++ (D11), exposed to Python with pybind11.
 // Build:  python setup.py build_ext --inplace     then:  python -m pytest -q -k cpp
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <cstdint>
 #include <stdexcept>
+#include <limits>
 #include <utility>
 
 namespace py = pybind11;
 
 // Bits set in one byte. (std::popcount needs C++20; this works everywhere.)
-static inline int popcount8(uint8_t x) {
-    int c = 0;
-    while (x) { x &= static_cast<uint8_t>(x - 1); ++c; }
-    return c;
-}
+static const struct PopTable {
+    uint8_t t[256];
+    PopTable() { for (int i = 0; i < 256; ++i) { int c = 0, x = i; while (x) { x &= x - 1; ++c; } t[i] = static_cast<uint8_t>(c); } }
+} kPop;
+static inline int popcount8(uint8_t x) { return kPop.t[x]; }
 
 // q: N x B uint8, db: M x B uint8 (B = 32 for ORB). Returns (idx, dist) as int32 arrays of length N.
 // Ties go to the lowest index, exactly like the Python reference.
@@ -29,8 +30,18 @@ hamming_match(py::array_t<uint8_t, py::array::c_style | py::array::forcecast> q,
     const uint8_t* D = db.data();
     int32_t* I = idx.mutable_data();
     int32_t* S = dist.mutable_data();
-    // TODO (D11), you write this: for each query row i, loop over db rows j, sum popcount8(Q[i*B+k] ^ D[j*B+k]) over k; keep the smallest (strictly smaller wins, so ties keep the lowest j)
-    throw std::runtime_error("TODO D11: write hamming_match in cpp/fastmatch.cpp");
+    for (ssize_t i = 0; i < N; ++i) {
+        int32_t best_d = std::numeric_limits<int32_t>::max();
+        ssize_t best_j = 0;
+        for (ssize_t j = 0; j < M; ++j) {
+            int32_t d = 0;
+            for (ssize_t k = 0; k < B; ++k)
+                d += popcount8(static_cast<uint8_t>(Q[i * B + k] ^ D[j * B + k]));
+            if (d < best_d) { best_d = d; best_j = j; }   // strictly smaller: ties keep the lowest j
+        }
+        I[i] = static_cast<int32_t>(best_j);
+        S[i] = best_d;
+    }
     return {idx, dist};
 }
 

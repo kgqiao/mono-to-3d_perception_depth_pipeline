@@ -1,6 +1,7 @@
 # geom.py: depth -> 3D points, the ground plane, and depth metrics (steps D1 to D3).
 # Same functions as depthkit.py in the Wing depth-to-3D starter.
 import numpy as np
+import cv2
 
 
 def load_depth_png(path):
@@ -44,7 +45,7 @@ def backproject(depth, K):
     points_3d_transposed = points_3d.T
 
     # (D1): the pinhole model run backwards: X = (u - cx) Z / fx, Y = (v - cy) Z / fy
-    raise points_3d_transposed
+    return points_3d_transposed
 
 
 def ransac_plane(pts, thresh = 0.10, iters = 500, seed = 0):
@@ -65,16 +66,21 @@ def ransac_plane(pts, thresh = 0.10, iters = 500, seed = 0):
     4. Remember the plane that got the most inliers out of all planes (across iters = 500)
     5. Flip arrow of that chosen plane's vector upwards
         - In the KITTI dataset coordinate system, the camera's vertical axis 
-            (\(Y\)) points downward toward the ground. 
+            (/(Y/)) points downward toward the ground. 
         - Therefore, a proper ground plane should have an arrow pointing up 
-            toward the sky, meaning its \(b\) value must be negative.
+            toward the sky, meaning its /(b/) value must be negative.
         - If our winning plane happens to have its arrow pointing down into the 
-            earth, we multiply the whole equation by \(-1\) to flip it right-side 
+            earth, we multiply the whole equation by /(-1/) to flip it right-side 
             up without changing the actual flat surface.    
 
     Fit a*x + b*y + c*z + d = 0 with |(a, b, c)| = 1 and the normal 
     pointing toward the camera (d > 0).
     Return (np.array([a, b, c, d]), inlier mask)."""
+
+    # Set failure condition as to not break RANSAC calculations later
+    # Test Failure Condition A: When there's not enough points to run RANSAC
+    if len(pts) < 3:
+        return None, None
 
     #1. Set the random seed for reproducibility
     set_range = np.random.default_rng(seed)
@@ -97,6 +103,10 @@ def ransac_plane(pts, thresh = 0.10, iters = 500, seed = 0):
         normal = np.cross(v1, v2) # Finds a perpendicular normal vector to the plane formed by the 3 sampled points.
         normal_val = np.linalg.norm(normal) # Calculate the Euclidean length (magnitude) of the vector normal
         if normal_val < 1e-6: # Skip collinear points (where cross product magnitude = 0)
+            continue
+
+        # Conditional SKIP: Skip if bad sample setups --
+        if normal_val < 1e-6:
             continue
 
         # 3a. Normalize the normal vector to ensure |(a, b, c)| = 1
@@ -124,7 +134,15 @@ def ransac_plane(pts, thresh = 0.10, iters = 500, seed = 0):
 
         # 7. Orient normal vector properly
         # KITTI: Y points down, so a ground plane normal pointing up must have b < 0
-        if best_model is not None and best_model[1] > 0:
+        
+        
+        # Set failure condition as to not break RANSAC calculations later
+        # Test Failure Condition B: When there's not enough points to run RANSAC
+        if best_model is None: 
+            return None, None
+
+        # Orient the normal vector properly
+        if best_model[1] > 0:
             best_model = -best_model # Adding negative to reverse
 
     return best_model, best_mask
@@ -178,6 +196,7 @@ def metrics(pred, gt, max_depth=80.0):
 
     # 1a. Count number of pixels that match criteria of mask
     num_pixels = int(np.sum(mask))
+    pred = int(np.sum(mask)) # Apply same mask to pred
     
     if num_pixels == 0: # Handle edge case where no pixesl pass thru depth mask
         return {
@@ -188,13 +207,13 @@ def metrics(pred, gt, max_depth=80.0):
         }
 
     # 3. Computer Absolute Relative Error (AbsRel)
-    abs_rel = np.mean(np.abs(p - g) / g)
+    abs_rel = np.mean(np.abs(pred - gt) / gt)
 
     # 4. Compute Root Mean Squared Error (RMSE)
-    rmse = np.sqrt(np.mean(p - g) ** 2)
+    rmse = np.sqrt(np.mean(pred - gt) ** 2)
 
     # 5. Compute the Delta 1 threshold accuracy
-    ratio = np.maximum(p / g, g / p)
+    ratio = np.maximum(pred / gt, gt / pred)
     delta1 = np.mean(ratio < 1.25)
 
     # 6. Package and return the metrics dictionary
@@ -202,7 +221,7 @@ def metrics(pred, gt, max_depth=80.0):
         "abs_rel": float(abs_rel),
         "rmse": float(rmse),
         "delta1": float(delta1),
-        "n_pixels": n_pixels
+        "n_pixels": num_pixels
     }
 
 
@@ -210,4 +229,5 @@ def garg_crop(h, w):
     """The standard Eigen-split evaluation crop (Garg et al.). Returns a boolean H x W mask."""
     m = np.zeros((h, w), bool)
     m[int(0.40810811 * h):int(0.99189189 * h), int(0.03594771 * w):int(0.96405229 * w)] = True
+
     return m

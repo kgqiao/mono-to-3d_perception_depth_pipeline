@@ -1,5 +1,6 @@
 # D1-D3: a ray-cast flat road and a box where the right answers are known
 import numpy as np
+import cv2
 from geom import load_depth_png, backproject, ransac_plane, height_above, metrics
 
 K = np.array([[721.5, 0, 609.6], [0, 721.5, 172.9], [0, 0, 1.0]])

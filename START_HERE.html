@@ -218,6 +218,50 @@ python setup.py build_ext --inplace
 python -m pytest -q tests/test_cpp.py
 python bench_match.py
 </code></pre>
+<h2 id="testing">Testing</h2>
+<ol>
+<li>Full test suite</li>
+</ol>
+<p><code>python -m pytest -q</code></p>
+<p>Everything should pass.</p>
+<ol>
+<li>Each step end to end on synthetic data</li>
+</ol>
+<p><code>python d1_cloud.py --synthetic</code>
+<code>python d2_height.py --synthetic</code>
+<code>python d3_eval.py --synthetic</code>
+<code>python d4_two_view.py --synthetic</code>
+<code>python d5_vo.py --synthetic</code>
+<code>python d6_scale.py --synthetic</code>
+<code>python d7_failure.py --frames out/d5_04_frames.csv</code>
+<code>python d8_boxes.py --synthetic</code></p>
+<p>This only runs once D1 to D7 pass their tests, since the synthetic runs use all of them. Any script that errors shows you which function is responsible.</p>
+<ol start="3">
+<li>
+<p>Real KITTI data
+Run d5_vo.py and d6_scale.py on at least two sequences (for example 04 and 00). The README needs these numbers, and synthetic results don’t count.</p>
+</li>
+<li>
+<p>Write-up
+Fill in the README results and failure-analysis sections from your KITTI runs, following the D7 outline. Remove the placeholders and the “to fill” notes.</p>
+</li>
+</ol>
+<p>D9: phone calibration and loop test (optional)</p>
+<p>Print a checkerboard and take 15 to 20 photos of it at different angles, with zoom, focus and stabilization locked.
+Run python d9_calibrate.py --images data/checker/*.jpg --cols 9 --rows 6 --square 0.025.
+Check that the reprojection error is under about 0.5 px.</p>
+<p>Film a loop of known length, extract frames, then run d9_run.py and d9_loop.py.</p>
+<p>D10: LiDAR depth (optional)</p>
+<p>You need the KITTI Velodyne files for the sequence, which are large.
+Run python d10_lidar_depth.py --root data/kitti --seq 04 --cam 0 --out out/lidar/04 --n 500.</p>
+<p>Then run d6_scale.py with --lidar-dir out/lidar/04, so the LiDAR variant is included.</p>
+<p>D11: C++ matcher (optional)</p>
+<p>On Windows, install Visual Studio Build Tools with the “Desktop development with C++” workload first.</p>
+<p>Run python <a href="http://setup.py">setup.py</a> build_ext --inplace, then python -m pytest -q tests/test_cpp.py.</p>
+<p>Run python bench_match.py to see the speed comparison.</p>
+<p>D12: IMU speed (optional)</p>
+<p>KITTI raw OXTS data for the same drive is needed.
+Run d6_scale.py with --oxts pointing at that drive, and check that the F imu clean and F imu noisy rows appear in the table.</p>
 
             
             

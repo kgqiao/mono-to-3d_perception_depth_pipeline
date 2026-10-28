@@ -24,6 +24,7 @@ log = []
 est, _ = run_vo(src, "unit", log=log)
 gt = src.T
 pe, pg = est[:, :3, 3], gt[:, :3, 3]
+
 print(f"{len(est)} poses. Unit-scale baseline, so ATE needs scale alignment (sim3). This is NOT a metric result.")
 print(f"ATE sim3 = {ate(pe, pg, 'sim3'):.3f} m   ATE se3 (no scale) = {ate(pe, pg, 'se3'):.3f} m")
 print("KITTI-style drift (unit scale, so only meaningful after you fix scale in D6):", kitti_drift(est, gt))
@@ -37,8 +38,10 @@ with open(f"out/d5_{tag}_frames.csv", "w", newline="") as f:              # per-
         w.writerow([i, r["inliers"], np.linalg.norm(g[:3, 3]), rotation_error_deg(np.eye(3), g[:3, :3]),
                     rotation_error_deg(e[:3, :3], g[:3, :3])])
 from traj import umeyama
+
 s, R, t = umeyama(pe, pg, with_scale=True)
 aligned = est.copy(); aligned[:, :3, 3] = (s * (R @ pe.T)).T + t
+
 topdown({"ground truth": gt, "VO, unit scale (sim3-aligned)": aligned}, f"out/d5_{tag}_topdown.png", f"sequence {tag}")
 print(f"wrote out/d5_{tag}_est.txt, _gt.txt, _frames.csv, _topdown.png")
 print(f"evo:  evo_ape kitti out/d5_{tag}_gt.txt out/d5_{tag}_est.txt -as --plot     (-as = align with scale)")

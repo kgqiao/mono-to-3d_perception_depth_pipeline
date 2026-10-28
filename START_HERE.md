@@ -64,3 +64,58 @@ The lessons, tasks and checks for each step are in the Project lab, Perception t
     python -m pytest -q tests/test_cpp.py
     python bench_match.py
 
+## Testing ##
+
+1. Full test suite
+
+`python -m pytest -q`
+
+Everything should pass.
+
+1. Each step end to end on synthetic data
+
+`python d1_cloud.py --synthetic`
+`python d2_height.py --synthetic`
+`python d3_eval.py --synthetic`
+`python d4_two_view.py --synthetic`
+`python d5_vo.py --synthetic`
+`python d6_scale.py --synthetic`
+`python d7_failure.py --frames out/d5_04_frames.csv`
+`python d8_boxes.py --synthetic`
+
+This only runs once D1 to D7 pass their tests, since the synthetic runs use all of them. Any script that errors shows you which function is responsible.
+
+3. Real KITTI data
+Run d5_vo.py and d6_scale.py on at least two sequences (for example 04 and 00). The README needs these numbers, and synthetic results don’t count.
+
+4. Write-up
+Fill in the README results and failure-analysis sections from your KITTI runs, following the D7 outline. Remove the placeholders and the “to fill” notes.
+
+
+D9: phone calibration and loop test (optional)
+
+Print a checkerboard and take 15 to 20 photos of it at different angles, with zoom, focus and stabilization locked.
+Run python d9_calibrate.py --images data/checker/*.jpg --cols 9 --rows 6 --square 0.025. 
+Check that the reprojection error is under about 0.5 px.
+
+Film a loop of known length, extract frames, then run d9_run.py and d9_loop.py.
+
+D10: LiDAR depth (optional)
+
+You need the KITTI Velodyne files for the sequence, which are large.
+Run python d10_lidar_depth.py --root data/kitti --seq 04 --cam 0 --out out/lidar/04 --n 500.
+
+Then run d6_scale.py with --lidar-dir out/lidar/04, so the LiDAR variant is included.
+
+D11: C++ matcher (optional)
+
+On Windows, install Visual Studio Build Tools with the “Desktop development with C++” workload first.
+
+Run python setup.py build_ext --inplace, then python -m pytest -q tests/test_cpp.py.
+
+Run python bench_match.py to see the speed comparison.
+
+D12: IMU speed (optional)
+
+KITTI raw OXTS data for the same drive is needed.
+Run d6_scale.py with --oxts pointing at that drive, and check that the F imu clean and F imu noisy rows appear in the table.
