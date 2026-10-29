@@ -21,5 +21,3 @@ T_w_c = camera-to-world (KITTI ground truth). T_prev_cur = current camera in the
 
 ## Limitations
 (to fill)
-
-The plumbing (loading, plotting, command-line wiring, test fixtures) was written with AI help. The functions marked for you are mine.
